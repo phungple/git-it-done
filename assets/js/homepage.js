@@ -10,6 +10,9 @@ var formSubmitHandler = function(event) {
 
     if (username) {
         getUserRepos(username);
+
+        //clear old content
+        repoContainerEl.textContent = "";
         nameInputEl.value ="";
     } else {
         alert("Please eneter a GitHub username");
@@ -19,7 +22,7 @@ var formSubmitHandler = function(event) {
 var displayRepos = function(repos, searchTerm) {
     // check if api returned any repos
     if (repos.length === 0) {
-        repoContainerEl.textContent = " NO repositories found.";
+        repoContainerEl.textContent = " No repositories found.";
         return;
     }
     // clear old content
@@ -71,8 +74,11 @@ var getUserRepos = function(user) {
     // make a request to the url
     fetch(apiUrl)
         .then(function(response) {
+            //request was successful
             if (response.ok) {
+                console.log(response);
                 response.json().then(function(data){
+                    console.log(data);
                     displayRepos(data, user);
                 });
             } else {
@@ -85,5 +91,5 @@ var getUserRepos = function(user) {
         });
 };
 
-
+// add event listeners to forms
 userFormEl.addEventListener("submit", formSubmitHandler);
