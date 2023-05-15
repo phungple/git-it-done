@@ -1,5 +1,5 @@
 var issueContainerEl = document.querySelector("#issues-container");
-
+var limitWarningEl = document.querySelector("#limit-warning");
 var getRepoIssues = function(repo) {
     /* By default,GitHub returns request results in descending order by their created date, 
     meaning that we see newer issues first. The "?direction=asc" option REVERSES order to return older issues first*/
@@ -11,6 +11,12 @@ var getRepoIssues = function(repo) {
             response.json().then(function(data) {
                 // pass response data to dom function
                 displayIssues(data);
+
+                // check if api has paginated issues
+                if (response.headers.get("Link")) {
+                    console.log("repo has more than 30 issues");
+                    displayWarning(repo);
+                }
             });
         }
         else {
@@ -57,5 +63,19 @@ var displayIssues = function(issues) {
         // append to the DOM
         issueContainerEl.appendChild(issueEl);
     }
+};
+
+var displayWarning = function(repo) {
+    // add text to warning container
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+
+    // append to warning container
+    limitWarningEl.appendChild(linkEl);
+
 };
 getRepoIssues("facebook/react");
